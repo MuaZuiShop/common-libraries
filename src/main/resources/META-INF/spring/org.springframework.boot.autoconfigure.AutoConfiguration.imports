@@ -1,0 +1,2 @@
+com.quy.common.config.FeignClientConfig
+com.quy.common.config.OpenApiConfig

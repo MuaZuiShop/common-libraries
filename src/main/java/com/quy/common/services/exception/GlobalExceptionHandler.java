@@ -1,4 +1,4 @@
-package com.quy.common.exception;
+package com.quy.common.services.exception;
 
 import com.quy.common.response.ApiResponse;
 import feign.FeignException;

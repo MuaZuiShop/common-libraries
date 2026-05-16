@@ -1,4 +1,4 @@
-package com.quy.common.util.jwt;
+package com.quy.common.services.util.jwt;
 
 import com.quy.common.security.ERole;
 import io.jsonwebtoken.Claims;

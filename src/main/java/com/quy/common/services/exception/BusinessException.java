@@ -1,7 +1,6 @@
-package com.quy.common.exception;
+package com.quy.common.services.exception;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatusCode;
 
 @Getter
 public class BusinessException extends RuntimeException {

@@ -1,4 +1,4 @@
-package com.quy.common.exception;
+package com.quy.common.services.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

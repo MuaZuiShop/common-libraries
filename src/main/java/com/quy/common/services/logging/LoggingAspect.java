@@ -1,4 +1,4 @@
-package com.quy.common.logging;
+package com.quy.common.services.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

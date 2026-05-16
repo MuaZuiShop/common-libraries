@@ -1,6 +1,6 @@
 package com.quy.common.config;
 
-import com.quy.common.exception.CustomErrorCode;
+import com.quy.common.services.exception.CustomErrorCode;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

@@ -34,6 +34,7 @@ public enum CustomErrorCode implements Code {
 
     DATA_ALREADY_EXISTS(1001, "Dữ liệu đã tồn tại trong hệ thống"),
     INVALID_STATUS(1002, "Trạng thái không hợp lệ để thực hiện thao tác này");
+
     private final int code;
     private final String message;
 }

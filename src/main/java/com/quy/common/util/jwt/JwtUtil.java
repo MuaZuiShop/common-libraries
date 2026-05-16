@@ -10,6 +10,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,6 +37,23 @@ public class JwtUtil {
 
         this.accessTokenExp = props.getAccessExp();
         this.refreshTokenExp = props.getRefreshExp();
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            return parseToken(token).getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            parseToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String generateAccessToken(UUID userId, String username, List<ERole> roles) {
@@ -70,21 +88,21 @@ public class JwtUtil {
     }
 
     public UUID extractUserId(String token) {
-        return (UUID) Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .get("userId");
+        Object userIdObj = parseToken(token).get("userId");
+        if (userIdObj != null) {
+            return UUID.fromString(userIdObj.toString());
+        }
+        return null;
     }
 
     public List<ERole> extractRoles(String token) {
-        return (List<ERole>) Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .get("roles");
+        List<?> roles = parseToken(token).get("roles", List.class);
+        if (roles != null) {
+            return roles.stream()
+                .map(role -> ERole.valueOf(role.toString()))
+                .collect(Collectors.toList());
+        }
+        return null;
     }
 
     public Claims parseToken(String token) {

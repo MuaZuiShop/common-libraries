@@ -1,6 +1,6 @@
-package com.quy.common.services.util.jwt;
+package com.quy.common.util.jwt;
 
-import com.quy.common.security.ERole;
+import com.quy.common.core.security.ERole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
+
     private final Key key;
     private final long accessTokenExp;
     private final long refreshTokenExp;
@@ -23,37 +24,17 @@ public class JwtUtil {
         String secret = props.getSecret();
         if (secret == null || secret.isBlank()) {
             throw new IllegalStateException(
-                "JWT secret is not configured. Set JWT_SECRET env or configure jwt.secret in application.yml");
+                "JWT secret chưa được cấu hình. Thiết lập JWT_SECRET hoặc jwt.secret trong application.yml");
         }
-
         byte[] keyBytes;
         try {
             keyBytes = Base64.getDecoder().decode(secret);
         } catch (IllegalArgumentException ex) {
             keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         }
-
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-
-        this.accessTokenExp = props.getAccessExp();
+        this.key             = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenExp  = props.getAccessExp();
         this.refreshTokenExp = props.getRefreshExp();
-    }
-
-    public boolean isTokenExpired(String token) {
-        try {
-            return parseToken(token).getExpiration().before(new Date());
-        } catch (Exception e) {
-            return true;
-        }
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            parseToken(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     public String generateAccessToken(UUID userId, String username, List<ERole> roles) {
@@ -78,21 +59,30 @@ public class JwtUtil {
             .compact();
     }
 
+    public boolean validateToken(String token) {
+        try {
+            parseToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            return parseToken(token).getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
     public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
+        return parseToken(token).getSubject();
     }
 
     public UUID extractUserId(String token) {
         Object userIdObj = parseToken(token).get("userId");
-        if (userIdObj != null) {
-            return UUID.fromString(userIdObj.toString());
-        }
-        return null;
+        return userIdObj != null ? UUID.fromString(userIdObj.toString()) : null;
     }
 
     public List<ERole> extractRoles(String token) {

@@ -1,4 +1,4 @@
-package com.quy.common.response;
+package com.quy.common.core.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,5 +23,4 @@ public class PageResponse<T> {
         this.totalPages = page.getTotalPages();
         this.last = page.isLast();
     }
-
 }

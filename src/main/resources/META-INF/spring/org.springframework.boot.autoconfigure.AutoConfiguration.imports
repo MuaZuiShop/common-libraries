@@ -1,2 +1,3 @@
-com.quy.common.config.FeignClientConfig
-com.quy.common.config.OpenApiConfig
+com.quy.common.servlet.config.FeignClientConfig
+com.quy.common.servlet.config.OpenApiConfig
+com.quy.common.servlet.config.CommonSecurityAutoConfiguration

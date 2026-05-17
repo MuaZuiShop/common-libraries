@@ -1,20 +1,22 @@
-package com.quy.common.services;
+package com.quy.common.servlet.services;
 
-import com.quy.common.security.ERole;
+import com.quy.common.core.security.ERole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
+@Slf4j
 public class UserContextInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String userId = request.getHeader("X-User-Id");
+        String userId      = request.getHeader("X-User-Id");
         String rolesHeader = request.getHeader("X-User-Roles");
 
         if (userId != null) {
@@ -27,10 +29,9 @@ public class UserContextInterceptor implements HandlerInterceptor {
                     .map(String::trim)
                     .map(ERole::valueOf)
                     .collect(Collectors.toList());
-
                 UserContext.setUserRoles(roles);
             } catch (IllegalArgumentException e) {
-                System.err.println("Lỗi parse role từ header: " + rolesHeader);
+                log.warn("Không thể parse role từ header: {}", rolesHeader);
             }
         }
 
@@ -38,7 +39,12 @@ public class UserContextInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public void afterCompletion(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object handler,
+        Exception ex
+    ) {
         UserContext.clear();
     }
 }

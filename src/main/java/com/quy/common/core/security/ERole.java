@@ -1,4 +1,4 @@
-package com.quy.common.security;
+package com.quy.common.core.security;
 
 public enum ERole {
     USER,

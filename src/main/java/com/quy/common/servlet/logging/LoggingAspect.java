@@ -1,4 +1,4 @@
-package com.quy.common.services.logging;
+package com.quy.common.servlet.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,10 +12,10 @@ import org.springframework.util.StopWatch;
 @Slf4j
 public class LoggingAspect {
 
-    @Around("within(com.quy..controller..*)")
+    @Around("within(@org.springframework.web.bind.annotation.RestController *)")
     public Object logApiActivity(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
-        log.info("API IN: Executing {}", methodName);
+        log.info(">>> API IN : {}", methodName);
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -23,11 +23,11 @@ public class LoggingAspect {
         try {
             Object result = joinPoint.proceed();
             stopWatch.stop();
-            log.info("API OUT: {} executed successfully in {} ms", methodName, stopWatch.getTotalTimeMillis());
+            log.info("<<< API OUT: {} | {}ms", methodName, stopWatch.getTotalTimeMillis());
             return result;
         } catch (Exception e) {
             stopWatch.stop();
-            log.error("API ERROR: {} failed after {} ms. Reason: {}", methodName, stopWatch.getTotalTimeMillis(), e.getMessage());
+            log.error("!!! API ERR: {} | {}ms | reason={}", methodName, stopWatch.getTotalTimeMillis(), e.getMessage());
             throw e;
         }
     }

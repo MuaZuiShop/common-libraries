@@ -1,10 +1,13 @@
-package com.quy.common.services;
+package com.quy.common.servlet.services;
 
-import com.quy.common.security.ERole;
+import com.quy.common.core.security.ERole;
 import java.util.List;
 
-public class UserContext {
-    private static final ThreadLocal<String> currentUserId = new ThreadLocal<>();
+public final class UserContext {
+
+    private UserContext() {}
+
+    private static final ThreadLocal<String>      currentUserId    = new ThreadLocal<>();
     private static final ThreadLocal<List<ERole>> currentUserRoles = new ThreadLocal<>();
 
     public static void setUserId(String userId) {
@@ -26,6 +29,10 @@ public class UserContext {
     public static boolean hasRole(ERole role) {
         List<ERole> roles = currentUserRoles.get();
         return roles != null && roles.contains(role);
+    }
+
+    public static boolean isAuthenticated() {
+        return currentUserId.get() != null;
     }
 
     public static void clear() {

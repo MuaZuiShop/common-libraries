@@ -1,4 +1,4 @@
-package com.quy.common.services.util.jwt;
+package com.quy.common.util.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

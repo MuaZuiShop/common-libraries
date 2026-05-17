@@ -11,14 +11,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
     private final Key key;
+
+    @Getter
     private final long accessTokenExp;
+
+    @Getter
     private final long refreshTokenExp;
+
+    private static final String CLAIM_TYPE = "type";
+    private static final String TYPE_ACCESS = "ACCESS";
+    private static final String TYPE_REFRESH = "REFRESH";
 
     public JwtUtil(JwtProperties props) {
         String secret = props.getSecret();
@@ -42,6 +51,7 @@ public class JwtUtil {
             .setSubject(username)
             .claim("roles", roles)
             .claim("userId", userId)
+            .claim(CLAIM_TYPE, TYPE_ACCESS)
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + accessTokenExp))
             .signWith(key)
@@ -53,6 +63,7 @@ public class JwtUtil {
             .setSubject(username)
             .claim("roles", roles)
             .claim("userId", userId)
+            .claim(CLAIM_TYPE, TYPE_REFRESH)
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExp))
             .signWith(key)
@@ -63,6 +74,24 @@ public class JwtUtil {
         try {
             parseToken(token);
             return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isAccessToken(String token) {
+        try {
+            String type = parseToken(token).get(CLAIM_TYPE, String.class);
+            return TYPE_ACCESS.equals(type);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            String type = parseToken(token).get(CLAIM_TYPE, String.class);
+            return TYPE_REFRESH.equals(type);
         } catch (Exception e) {
             return false;
         }
